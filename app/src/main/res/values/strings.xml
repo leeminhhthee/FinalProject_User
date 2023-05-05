@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Final Project</string>
+    <string name="price_00000000">Price: 00000000 VND</string>
+    <string name="add_to_cart">Add To Cart</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

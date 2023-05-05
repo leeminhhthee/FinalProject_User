@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/abhaya_libre_medium</item>
+        <item>@font/abhaya_libre_semibold</item>
+        <item>@font/acme</item>
+        <item>@font/advent_pro_thin</item>
+        <item>@font/alata</item>
+        <item>@font/alegreya</item>
+        <item>@font/aleo_italic</item>
+        <item>@font/alice</item>
+        <item>@font/allan</item>
+        <item>@font/allerta</item>
+        <item>@font/allerta_stencil</item>
+        <item>@font/amaranth_bold</item>
+        <item>@font/amethysta</item>
+        <item>@font/andada</item>
+        <item>@font/arapey</item>
+        <item>@font/montaga</item>
+        <item>@font/vidaloka</item>
+    </array>
+</resources>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/container"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
+    android:elevation="3dp">
+
+    <ImageView
+        android:id="@+id/item_ProImgSeeall"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/apple_watch_s8" />
+
+    <ImageView
+        android:id="@+id/freshipExtra"
+        android:src="@drawable/freeship_extra"
+        android:layout_width="45dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/item_ProImgSeeall"
+        app:layout_constraintTop_toTopOf="@+id/item_ProImgSeeall" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="35dp"
+        android:layout_height="25dp"
+        android:background="#4CAF50"
+        android:gravity="center"
+        android:text="5.5"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/item_ProImgSeeall"
+        app:layout_constraintStart_toStartOf="@+id/item_ProImgSeeall" />
+
+    <TextView
+        android:id="@+id/item_ProNameSeeall"
+        android:layout_width="180dp"
+        android:layout_height="30dp"
+        android:paddingTop="3dp"
+        android:text="title title titlettitletitleitle title title title title title title title "
+        android:textColor="#373b54"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/freshipExtra"
+        app:layout_constraintTop_toTopOf="@+id/freshipExtra" />
+
+    <RatingBar
+        android:id="@+id/item_ProRatingSeeall"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:stepSize="0.1"
+        app:layout_constraintStart_toStartOf="@+id/freshipExtra"
+        app:layout_constraintTop_toBottomOf="@+id/freshipExtra" />
+
+    <TextView
+        android:id="@+id/item_ProPriceSeeall"
+        android:layout_marginTop="4dp"
+        android:textColor="#EA0202"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="đ 219.000"
+        app:layout_constraintStart_toStartOf="@+id/item_ProRatingSeeall"
+        app:layout_constraintTop_toBottomOf="@+id/item_ProRatingSeeall" />
+
+    <TextView
+        android:id="@+id/item_ProBrandSeeall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/aleo_italic"
+        android:text="Apple"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="10sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintStart_toStartOf="@+id/item_ProPriceSeeall"
+        app:layout_constraintTop_toBottomOf="@+id/item_ProPriceSeeall" />
+
+    <TextView
+        android:id="@+id/item_ProSoldSeeall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Sold 35"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="9sp"
+        app:layout_constraintBottom_toBottomOf="@+id/item_ProBrandSeeall"
+        app:layout_constraintEnd_toEndOf="@+id/item_ProRatingSeeall"
+        app:layout_constraintStart_toEndOf="@+id/item_ProBrandSeeall"
+        app:layout_constraintTop_toTopOf="@+id/item_ProBrandSeeall" />
+
+    <TextView
+        android:id="@+id/item_ProAddCartSeeall"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Buy now"
+        android:textColor="@color/white"
+        android:background="#DF4818"
+        android:padding="6dp"
+        android:textAlignment="center"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/item_ProNameSeeall" />
+    <View
+        android:id="@+id/line_view"
+        android:layout_width="310dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="50dp"
+        android:background="#B6B3B3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
