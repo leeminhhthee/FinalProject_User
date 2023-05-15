@@ -24,14 +24,12 @@ import com.android.finalproject.models.MyCartModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CartActivity extends AppCompatActivity {
@@ -112,7 +110,7 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(isAliveCart) {
-                    Intent intent = new Intent(CartActivity.this, AddressActivity.class);
+                    Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
                     intent.putExtra("total", totalBill);
                     startActivity(intent);
                 } else {

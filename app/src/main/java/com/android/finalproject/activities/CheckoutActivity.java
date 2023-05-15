@@ -19,10 +19,8 @@ import com.android.finalproject.adapters.AddressAdapter;
 import com.android.finalproject.models.AddressModel;
 import com.android.finalproject.models.MyCartModel;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -34,7 +32,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class AddressActivity extends AppCompatActivity implements AddressAdapter.SelectedAddress{
+public class CheckoutActivity extends AppCompatActivity implements AddressAdapter.SelectedAddress{
     Button addAddressBtn;
     AppCompatButton btnPayment;
     Toolbar toolbar;
@@ -52,7 +50,7 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_address);
+        setContentView(R.layout.activity_checkout);
 
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -96,7 +94,9 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
         addAddressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(AddressActivity.this, AddAddressActivity.class));
+                Intent intent = new Intent(CheckoutActivity.this, AddAddressActivity.class);
+                startActivity(intent);
+//                finish();
             }
         });
 
@@ -153,6 +153,7 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
                 cartMap.put("address", orderAddress);
                 cartMap.put("total", orderTotal);
                 cartMap.put("date", saveCurrentDate);
+                cartMap.put("status", "Dang chuan bi hang!");
 
                 docId = firestore.collection("Orders").document(auth.getCurrentUser().getUid())
                         .collection("Orderdetail").document().getId();
@@ -199,8 +200,8 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
                             }
                         });
 
-                Toast.makeText(AddressActivity.this, "Ordered successfully!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(AddressActivity.this, MainActivity.class));
+                Toast.makeText(CheckoutActivity.this, "Ordered successfully!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(CheckoutActivity.this, MainActivity.class));
                 finish();
             }
         });

@@ -48,29 +48,19 @@ public class AddAddressActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
-//        name = findViewById(R.id.ad_name);
         address = findViewById(R.id.ad_address);
         city = findViewById(R.id.ad_city);
         postalCode = findViewById(R.id.ad_code);
-//        phoneNumber = findViewById(R.id.ad_phone);
         addAddressBtn = findViewById(R.id.ad_add_address);
         addAddressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                String userName = name.getText().toString();
                 String userCity = city.getText().toString();
                 String userAddress = address.getText().toString();
                 String userCode = postalCode.getText().toString();
-//                String userNumber = phoneNumber.getText().toString();
 
                 String final_address = "";
 
-//                if(!userName.isEmpty()){
-//                    final_address += userName + " - ";
-//                }
-//                if(!userNumber.isEmpty()){
-//                    final_address += userNumber + " - ";
-//                }
                 if(!userCode.isEmpty()){
                     final_address += userCode + " ";
                 }
@@ -90,15 +80,16 @@ public class AddAddressActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<DocumentReference> task) {
                                     if(task.isSuccessful()){
                                         Toast.makeText(AddAddressActivity.this, "Address Added!", Toast.LENGTH_SHORT).show();
+
+                                        Intent intent = new Intent(AddAddressActivity.this, CartActivity.class);
+                                        startActivity(intent);
+                                        finish();
                                     }
                                 }
                             });
                 } else {
                     Toast.makeText(AddAddressActivity.this, "Kindly Fill All Field!", Toast.LENGTH_SHORT).show();
                 }
-
-                startActivity(new Intent(AddAddressActivity.this, AddressActivity.class));
-                finish();
             }
         });
     }
