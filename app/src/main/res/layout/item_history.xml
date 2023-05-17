@@ -53,7 +53,7 @@
             <Button
                 android:id="@+id/status"
                 android:text="Đơn hàng đang được xử lí"
-                android:backgroundTint="#EFE9E9"
+                android:backgroundTint="#F4F4F4"
                 android:textColor="@color/red"
                 android:layout_marginStart="7dp"
                 android:textStyle="italic"

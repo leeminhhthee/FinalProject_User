@@ -148,6 +148,8 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
                 saveCurrentDate = currentDate.format(calForDate.getTime());
 
                 final String docId;
+
+                docId = firestore.collection("orders").document().getId();
                 //Put user information order to database
                 final HashMap<String, Object> cartMap = new HashMap<>();
                 cartMap.put("name", orderName);
@@ -156,9 +158,9 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
                 cartMap.put("address", orderAddress);
                 cartMap.put("total", orderTotal);
                 cartMap.put("date", saveCurrentDate);
-                cartMap.put("status", "Dang chuan bi hang!");
+                cartMap.put("status", "Đơn hàng đang được xử lí");
+                cartMap.put("id", docId);
 
-                docId = firestore.collection("orders").document().getId();
 
                 firestore.collection("orders").document(docId).set(cartMap);
 

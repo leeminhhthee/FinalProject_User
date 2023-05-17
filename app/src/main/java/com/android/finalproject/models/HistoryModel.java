@@ -3,6 +3,7 @@ package com.android.finalproject.models;
 import java.util.List;
 
 public class HistoryModel {
+    String id;
     String name;
     String phone;
     String email;
@@ -15,7 +16,8 @@ public class HistoryModel {
     public HistoryModel() {
     }
 
-    public HistoryModel(String name, String phone, String email, String address, String date, int total, String status, List<HistoryProductModel> products) {
+    public HistoryModel(String id, String name, String phone, String email, String address, String date, int total, String status, List<HistoryProductModel> products) {
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -24,6 +26,14 @@ public class HistoryModel {
         this.total = total;
         this.status = status;
         this.products = products;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

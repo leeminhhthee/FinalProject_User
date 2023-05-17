@@ -61,6 +61,7 @@ public class HistoryActivity extends AppCompatActivity {
                     //Thành công
                     for (DocumentSnapshot document : task.getResult()) {
                         //Get information
+                        String id = document.getId();
                         String name = (String) document.get("name");
                         String phone = (String) document.get("phone");
                         String email = (String) document.get("email");
@@ -80,7 +81,7 @@ public class HistoryActivity extends AppCompatActivity {
                                             productList.add(document.toObject(HistoryProductModel.class));
                                         }
                                         // Tạo đối tượng OrderModel và thêm vào danh sách list
-                                        HistoryModel historyModel = new HistoryModel(name, phone, email,
+                                        HistoryModel historyModel = new HistoryModel(id, name, phone, email,
                                                 address, date, total, status, productList);
                                         list.add(historyModel);
 

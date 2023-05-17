@@ -3,6 +3,7 @@ package com.android.finalproject.models;
 import java.io.Serializable;
 
 public class ShowAllModel implements Serializable {
+    String id;
     String description;
     String name;
     int price;
@@ -12,14 +13,21 @@ public class ShowAllModel implements Serializable {
     public ShowAllModel() {
     }
 
-    public ShowAllModel(String description, String name, int price, String img_url, String pro_brand) {
+    public ShowAllModel(String id, String description, String name, int price, String img_url, String pro_brand) {
+        this.id = id;
         this.description = description;
         this.name = name;
         this.price = price;
         this.img_url = img_url;
         this.pro_brand = pro_brand;
     }
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getDescription() {
         return description;
     }

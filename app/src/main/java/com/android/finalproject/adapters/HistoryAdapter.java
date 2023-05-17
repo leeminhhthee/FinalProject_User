@@ -1,6 +1,7 @@
 package com.android.finalproject.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +38,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         HistoryModel order = array.get(position);
-        holder.idOrder.setText("Order of #"+order.getName());
-        holder.status.setText(order.getStatus()+"");
+        holder.idOrder.setText("Order #"+order.getId());
+        if(order.getStatus().equals("Đơn hàng đã được thanh toán")) {
+            holder.status.setTextColor(Color.parseColor("#55F400"));
+            holder.status.setText(order.getStatus());
+        } else if(order.getStatus().equals("Đơn hàng đang được giao")){
+            holder.status.setTextColor(Color.parseColor("#FF3700B3"));
+            holder.status.setText(order.getStatus());
+        } else if(order.getStatus().equals("Đơn hàng đang được xử lí")) {
+            holder.status.setTextColor(Color.parseColor("#FF1100"));
+            holder.status.setText(order.getStatus());
+        }
         holder.created_at.setText("Order at " + order.getDate());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
