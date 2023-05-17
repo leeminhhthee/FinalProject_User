@@ -1,5 +1,7 @@
 package com.android.finalproject.fragments;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,9 +15,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,8 +53,9 @@ public class HomeFragment extends Fragment {
     ProgressDialog progressDialog;
     RecyclerView rc_brand, rc_new, rc_suggest;
     ConstraintLayout home_layout;
-    ImageView btnLogout, userImgHome;
+    ImageView btnLogout, userImgHome, search;
     TextView tvSeeAll, userNameHome;
+    EditText editSearch;
 
     //Brand home recyclerview
     BrandAdapter brandAdapter;
@@ -153,6 +160,23 @@ public class HomeFragment extends Fragment {
         rc_new = root.findViewById(R.id.rc_new);
         rc_suggest = root.findViewById(R.id.rc_suggest);
         btnLogout = root.findViewById(R.id.btnLogout);
+        editSearch = root.findViewById(R.id.editSearch);
+        search = root.findViewById(R.id.search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String searchQuery = editSearch.getText().toString().trim();
+                if (!TextUtils.isEmpty(searchQuery)) {
+                    Intent intent = new Intent(getContext(), ShowAllActivity.class);
+                    intent.putExtra("wordsearch", searchQuery);
+                    startActivity(intent);
+                }
+                else {
+                    // Hiển thị thông báo cho người dùng nhập tên sản phẩm
+                    Toast.makeText(getContext(), "Vui lòng nhập tên sản phẩm", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         //Set data of user in home fragment
         userNameHome = root.findViewById(R.id.userNameHome);
@@ -217,7 +241,7 @@ public class HomeFragment extends Fragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });

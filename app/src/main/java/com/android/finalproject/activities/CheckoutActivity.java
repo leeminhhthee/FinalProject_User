@@ -24,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CheckoutActivity extends AppCompatActivity implements AddressAdapter.SelectedAddress{
     Button addAddressBtn;
@@ -155,12 +158,9 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
                 cartMap.put("date", saveCurrentDate);
                 cartMap.put("status", "Dang chuan bi hang!");
 
-                docId = firestore.collection("Orders").document(auth.getCurrentUser().getUid())
-                        .collection("Orderdetail").document().getId();
+                docId = firestore.collection("orders").document().getId();
 
-                firestore.collection("Orders").document(auth.getCurrentUser().getUid())
-                        .collection("Orderdetail").document(docId).collection("information").document("receiver")
-                        .set(cartMap);
+                firestore.collection("orders").document(docId).set(cartMap);
 
                 //Get product from cart
                 //then, put product order to database
@@ -179,8 +179,7 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
                                         proMap.put("proImg", myCartModel.getProductImg());
                                         proMap.put("totalPrice", myCartModel.getTotalPrice());
 
-                                        firestore.collection("Orders").document(auth.getCurrentUser().getUid())
-                                                .collection("Orderdetail").document(docId).collection("products")
+                                        firestore.collection("orders").document(docId).collection("order_detail")
                                                 .add(proMap);
                                     }
                                 }
@@ -199,6 +198,15 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
                                 }
                             }
                         });
+                //Post thông báo cho admin
+                /* Map<String, String> data = new HashMap<>();
+                data.put("title", "Đơn hàng mới");
+                data.put("message", "Bạn có một đơn hàng mới cần xử lý");
+
+                FirebaseMessaging.getInstance().send(new RemoteMessage.Builder("admin_app")
+                        .setData(data)
+                        .build()); */
+
 
                 Toast.makeText(CheckoutActivity.this, "Ordered successfully!", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(CheckoutActivity.this, MainActivity.class));

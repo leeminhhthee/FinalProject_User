@@ -94,21 +94,31 @@
 
                 <EditText
                     android:id="@+id/editSearch"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="10dp"
-                    android:drawableStart="@drawable/ic_search"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:hint="Search..."
-                    android:textColorHint="@color/red"
-                    android:padding="8dp"
-                    android:drawablePadding="8dp"
                     android:background="@drawable/edittext_search_background"
+                    android:drawableStart="@drawable/ic_search"
+                    android:drawablePadding="8dp"
+                    android:layout_marginStart="20dp"
+                    android:ems="10"
+                    android:hint="Search..."
+                    android:inputType="textPersonName"
+                    android:padding="8dp"
+                    android:textColorHint="@color/red"
                     android:textStyle="italic"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/userNameHome" />
+
+                <ImageView
+                    android:id="@+id/search"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_search"
+                    app:layout_constraintBottom_toBottomOf="@+id/editSearch"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/editSearch" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/container1"

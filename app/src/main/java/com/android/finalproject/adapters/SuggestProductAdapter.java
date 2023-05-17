@@ -49,6 +49,7 @@ public class SuggestProductAdapter extends RecyclerView.Adapter<SuggestProductAd
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("detailed", suggestProductModel);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });

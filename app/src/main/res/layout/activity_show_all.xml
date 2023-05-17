@@ -17,12 +17,49 @@
         app:titleTextColor="#EA0202">
     </androidx.appcompat.widget.Toolbar>
 
+    <EditText
+        android:id="@+id/searchShow"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:visibility="gone"
+        android:layout_below="@+id/toolbarNew"
+        android:background="@drawable/edittext_search_background"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="8dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:ems="10"
+        android:hint="Search..."
+        android:inputType="textPersonName"
+        android:padding="8dp"
+        android:textColorHint="@color/red"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarNew" />
+
+    <TextView
+        android:id="@+id/tvSearchEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarNew"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:text="Your Cart is Empty!"
+        android:gravity="center"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarNew" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_below="@+id/toolbarNew">
+        android:layout_below="@+id/searchShow">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rc_product"

@@ -1,22 +1,31 @@
 package com.android.finalproject.activities;
 
+import static android.content.ContentValues.TAG;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.finalproject.R;
 import com.android.finalproject.fragments.HomeFragment;
 import com.android.finalproject.fragments.ProductFragment;
 import com.android.finalproject.fragments.ProfileFragment;
 import com.android.finalproject.fragments.SupportFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
     LinearLayout home, products, support, profile;
@@ -34,6 +43,22 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
         initControlFragmentView();
+
+        //Get token
+        /*FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        // Log and toast
+                        Log.d("tokenmessaging", token);
+                    }
+                }); */
 
     }
 
