@@ -1,7 +1,11 @@
 package com.android.finalproject.adapters;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.finalproject.R;
 import com.android.finalproject.activities.CartActivity;
+import com.android.finalproject.activities.LoginActivity;
 import com.android.finalproject.activities.MainActivity;
 import com.android.finalproject.models.MyCartModel;
 import com.bumptech.glide.Glide;
@@ -48,7 +54,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         MyCartModel myCartModel = array.get(position);
         holder.name.setText(myCartModel.getProductName());
         holder.totalQty.setText(myCartModel.getTotalQty()+"");
@@ -59,33 +65,128 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
 
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+
         holder.removeCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
-                        .collection("User").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        .collection("User").whereEqualTo("productId", myCartModel.getProductId())
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if(task.isSuccessful()) {
                                     for(DocumentSnapshot doc : task.getResult().getDocuments()){
-                                        MyCartModel myCartModel = doc.toObject(MyCartModel.class);
-                                        if(myCartModel.getProductName().equals(holder.name.getText().toString())){
-                                            doc.getReference().delete();
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
+                                        builder.setTitle("Warning: ");
+                                        builder.setMessage("Are you sure? Delete this product.");
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                doc.getReference().delete();
+                                                Toast.makeText(view.getContext(), "DONE", Toast.LENGTH_SHORT).show();
+                                                context.startActivity(new Intent(context, MainActivity.class));
+                                                ((Activity) context).finish();
+                                            }
+                                        });
+                                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.dismiss();
+                                            }
+                                        });
+                                        builder.show();
+                                    }
+                                }
+                            }
+                        });
+            }
+        });
+
+        holder.add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
+                        .collection("User").whereEqualTo("productId", myCartModel.getProductId())
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()) {
+                                    for(DocumentSnapshot doc : task.getResult().getDocuments()){
+                                        doc.getReference().update("totalQty", myCartModel.getTotalQty() + 1);
+                                        doc.getReference().update("totalPrice", myCartModel.getTotalPrice() + myCartModel.getProductPrice());
+                                        myCartModel.setTotalQty(myCartModel.getTotalQty() + 1);
+                                        myCartModel.setTotalPrice(myCartModel.getTotalPrice() + myCartModel.getProductPrice());
+                                        notifyItemChanged(position);
+                                    }
+                                }
+                            }
+                        });
+            }
+        });
+
+        holder.minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
+                        .collection("User").whereEqualTo("productId", myCartModel.getProductId())
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()) {
+                                    for(DocumentSnapshot doc : task.getResult().getDocuments()){
+                                        if(myCartModel.getTotalQty() > 1){
+                                            doc.getReference().update("totalQty", myCartModel.getTotalQty() - 1);
+                                            doc.getReference().update("totalPrice", myCartModel.getTotalPrice() - myCartModel.getProductPrice());
+                                            myCartModel.setTotalQty(myCartModel.getTotalQty() - 1);
+                                            myCartModel.setTotalPrice(myCartModel.getTotalPrice() - myCartModel.getProductPrice());
+                                            notifyItemChanged(position);
+                                        } else {
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
+                                            builder.setTitle("Warning: ");
+                                            builder.setMessage("Are you sure? Delete this product.");
+                                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    doc.getReference().delete();
+                                                    context.startActivity(new Intent(context, MainActivity.class));
+                                                    ((Activity) context).finish();
+                                                    Toast.makeText(view.getContext(), "DONE", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.dismiss();
+                                                }
+                                            });
+                                            builder.show();
                                         }
                                     }
                                 }
                             }
                         });
-                Toast.makeText(view.getContext(), "DONE", Toast.LENGTH_SHORT).show();
-                context.startActivity(new Intent(context, MainActivity.class));
-                ((Activity) context).finish();
             }
         });
 
-        totalPrice = totalPrice + myCartModel.getTotalPrice();
-        Intent intent = new Intent("MyTotalPrice");
-        intent.putExtra("totalPrice", totalPrice);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
+                .collection("User")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            int totalNew = 0;
+                            for(DocumentSnapshot doc : task.getResult().getDocuments()){
+                                MyCartModel cart = doc.toObject(MyCartModel.class);
+                                totalNew = totalNew + cart.getTotalPrice();
+                            }
+                            totalPrice = totalNew;
+                            Intent intent = new Intent("MyTotalPrice");
+                            intent.putExtra("totalPrice", totalPrice);
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                        }
+                    }
+                });
+
     }
 
     @Override
@@ -95,7 +196,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView name, price, totalQty, totalPrice;
-        ImageView image, removeCart;
+        ImageView image, removeCart, minus, add;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -105,6 +206,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
             totalPrice = itemView.findViewById(R.id.item_CartTotalPrice);
             image = itemView.findViewById(R.id.item_CartProImg);
             removeCart = itemView.findViewById(R.id.removeCart);
+            minus = itemView.findViewById(R.id.minusCartBtn);
+            add = itemView.findViewById(R.id.addCartBtn);
         }
     }
 }

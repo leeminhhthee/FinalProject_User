@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.finalproject.R;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class ShowAllActivity extends AppCompatActivity {
+    LinearLayout progressbar;
     RecyclerView rc_product;
     ShowAllAdapter showAllAdapter;
     SuggestProductAdapter suggestProductAdapter;
@@ -54,6 +56,7 @@ public class ShowAllActivity extends AppCompatActivity {
 
         firestore = FirebaseFirestore.getInstance();
 
+        progressbar = findViewById(R.id.progressbar_product);
         rc_product = findViewById(R.id.rc_product);
         toolbarNew = findViewById(R.id.toolbarNew);
         search = findViewById(R.id.searchShow);
@@ -77,6 +80,7 @@ public class ShowAllActivity extends AppCompatActivity {
                                     showAllNewModelList.add(showAllNewModel);
                                     showAllAdapter.notifyDataSetChanged();
                                 }
+                                progressbar.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(getApplicationContext(), task.getException() + "", Toast.LENGTH_SHORT).show();
                             }
@@ -104,6 +108,7 @@ public class ShowAllActivity extends AppCompatActivity {
                                     suggestProductModelList.add(suggestProductModel);
                                     suggestProductAdapter.notifyDataSetChanged();
                                 }
+                                progressbar.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(getApplicationContext(), task.getException() + "", Toast.LENGTH_SHORT).show();
                             }
@@ -130,6 +135,7 @@ public class ShowAllActivity extends AppCompatActivity {
                                     suggestProductModelList.add(suggestProductModel);
                                     suggestProductAdapter.notifyDataSetChanged();
                                 }
+                                progressbar.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(getApplicationContext(), task.getException() + "", Toast.LENGTH_SHORT).show();
                             }
@@ -156,6 +162,7 @@ public class ShowAllActivity extends AppCompatActivity {
                                     suggestProductModelList.add(suggestProductModel);
                                     suggestProductAdapter.notifyDataSetChanged();
                                 }
+                                progressbar.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(getApplicationContext(), task.getException() + "", Toast.LENGTH_SHORT).show();
                             }
@@ -182,6 +189,7 @@ public class ShowAllActivity extends AppCompatActivity {
                                     suggestProductModelList.add(suggestProductModel);
                                     suggestProductAdapter.notifyDataSetChanged();
                                 }
+                                progressbar.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(getApplicationContext(), task.getException() + "", Toast.LENGTH_SHORT).show();
                             }
@@ -215,6 +223,7 @@ public class ShowAllActivity extends AppCompatActivity {
                             suggestProductAdapter.notifyDataSetChanged();
                         }
                         if(suggestProductModelList.isEmpty()){
+                            progressbar.setVisibility(View.GONE);
                             findViewById(R.id.tvSearchEmpty).setVisibility(View.VISIBLE);
                         }
                     } else {

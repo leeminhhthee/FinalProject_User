@@ -1,6 +1,7 @@
 package com.android.finalproject.models;
 
 public class MyCartModel {
+    String productId;
     String currentTime;
     String currentDate;
     String productName;
@@ -12,7 +13,8 @@ public class MyCartModel {
     public MyCartModel() {
     }
 
-    public MyCartModel(String currentTime, String currentDate, String productName, String productImg, int productPrice, int totalQty, int totalPrice) {
+    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productImg, int productPrice, int totalQty, int totalPrice) {
+        this.productId = productId;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
         this.productName = productName;
@@ -20,6 +22,14 @@ public class MyCartModel {
         this.productPrice = productPrice;
         this.totalQty = totalQty;
         this.totalPrice = totalPrice;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getCurrentTime() {

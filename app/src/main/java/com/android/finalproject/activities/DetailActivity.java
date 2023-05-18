@@ -45,7 +45,7 @@ public class DetailActivity extends AppCompatActivity {
     int totalQty = 1;
     int totalPrice = 0;
     int proPrice;
-    String proImg;
+    String proImg, proId;
     int qtyEnd = 0, priceEnd = 0;
 
     //New products
@@ -91,6 +91,7 @@ public class DetailActivity extends AppCompatActivity {
             totalPrice = newProductModel.getPrice() * totalQty;
             proPrice = newProductModel.getPrice();
             proImg = newProductModel.getImg_url();
+            proId = newProductModel.getId();
         }
 
         //Suggest products
@@ -104,6 +105,7 @@ public class DetailActivity extends AppCompatActivity {
             totalPrice = suggestProductModel.getPrice() * totalQty;
             proPrice = suggestProductModel.getPrice();
             proImg = suggestProductModel.getImg_url();
+            proId = suggestProductModel.getId();
         }
 
         //Show all products
@@ -117,6 +119,7 @@ public class DetailActivity extends AppCompatActivity {
             totalPrice = showAllModel.getPrice() * totalQty;
             proPrice = showAllModel.getPrice();
             proImg = showAllModel.getImg_url();
+            proId = showAllModel.getId();
         }
 
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -206,6 +209,7 @@ public class DetailActivity extends AppCompatActivity {
                             cartMap.put("totalPrice", totalPrice + priceEnd);
                             cartMap.put("currentTime", saveCurrentTime);
                             cartMap.put("currentDate", saveCurrentDate);
+                            cartMap.put("productId", proId);
 
                             firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
                                     .collection("User").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

@@ -282,11 +282,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Change"
-                                android:password="true"
+                                android:text="Change  "
+                                android:layout_marginEnd="10dp"
+                                android:textStyle="italic|bold"
+                                android:fontFamily="@font/abhaya_libre_medium"
                                 android:textAlignment="viewEnd"
-                                android:textColor="#5B5B5B"
-                                android:textSize="12sp"
+                                android:textColor="#FF5722"
+                                android:textSize="16sp"
                                 tools:ignore="Deprecated" />
                         </LinearLayout>
 

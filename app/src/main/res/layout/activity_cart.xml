@@ -84,8 +84,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="190dp"
-                tools:listitem="@layout/item_product_cart"/>
+                android:layout_marginBottom="190dp"/>
         </LinearLayout>
     </ScrollView>
 

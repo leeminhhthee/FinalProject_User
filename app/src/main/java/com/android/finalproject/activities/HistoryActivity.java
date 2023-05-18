@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -30,6 +32,7 @@ public class HistoryActivity extends AppCompatActivity {
     RecyclerView rc_history;
     Toolbar toolbarHistory;
     TextView tvHistoryEmpty;
+    LinearLayout progressbar;
 
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
@@ -54,7 +57,9 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void getOrder() {
         //Load data
-        firestore.collection("orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firestore.collection("orders")
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
@@ -95,6 +100,7 @@ public class HistoryActivity extends AppCompatActivity {
                             });
                         }
                     }
+                    progressbar.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(getApplicationContext(), task.getException() + " :Lỗi", Toast.LENGTH_SHORT).show();
                 }
@@ -115,6 +121,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void initView() {
         rc_history = findViewById(R.id.rc_history);
+        progressbar = findViewById(R.id.progressbar_his);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rc_history.setLayoutManager(layoutManager);
         toolbarHistory = findViewById(R.id.toolbarHistory);

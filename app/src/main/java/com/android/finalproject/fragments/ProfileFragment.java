@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +30,8 @@ import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -42,7 +45,7 @@ import com.google.firebase.storage.UploadTask;
 
 public class ProfileFragment extends Fragment {
     AppCompatButton editProfile;
-    TextView userEmail, userName, userMobile, userAddress;
+    TextView userEmail, userName, userMobile, userAddress, changePass;
     ImageView userImage;
     BottomSheetDialog dialog;
     LinearLayout btnHistory, btnLogout;
@@ -70,6 +73,7 @@ public class ProfileFragment extends Fragment {
         userImage = root.findViewById(R.id.userImage);
         userMobile = root.findViewById(R.id.tvMobile);
         userAddress = root.findViewById(R.id.tvAddress);
+        changePass = root.findViewById(R.id.tvPassword);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         firestore = FirebaseFirestore.getInstance();
@@ -120,13 +124,9 @@ public class ProfileFragment extends Fragment {
 
                 TextView name = sheetView.findViewById(R.id.userNameEdit);
                 TextView phone = sheetView.findViewById(R.id.userPhoneEdit);
-//                TextView img = sheetView.findViewById(R.id.userImgUrlEdit);
 
                 //Set data into form EditProfile
                 name.setText(user.getDisplayName());
-//                if(user.getPhotoUrl() != null ){
-//                    img.setText(user.getPhotoUrl().toString());
-//                }
                 phone.setText(userMobile.getText());
 
                 sheetView.findViewById(R.id.btnEdit).setOnClickListener(new View.OnClickListener() {
@@ -135,12 +135,10 @@ public class ProfileFragment extends Fragment {
 
                         String userName = name.getText().toString();
                         String userPhone = phone.getText().toString();
-//                        String userImg = img.getText().toString();
 
                         //Update Name and Image URL User
                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(userName)
-//                                .setPhotoUri(Uri.parse(userImg))
                                 .build();
                         user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -199,6 +197,75 @@ public class ProfileFragment extends Fragment {
                 builder.show();
             }
         });
+
+        //Set onClick Change password
+        changePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Tạo và hiển thị hộp thoại
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.dialog_change_password, null);
+                builder.setView(dialogView);
+
+                // Lấy reference đến các EditText trong hộp thoại
+                EditText oldPasswordEditText = dialogView.findViewById(R.id.oldPasswordEditText);
+                EditText newPasswordEditText = dialogView.findViewById(R.id.newPasswordEditText);
+                EditText confirmPasswordEditText = dialogView.findViewById(R.id.confirmPasswordEditText);
+
+                // Thiết lập các thuộc tính và sự kiện cho hộp thoại
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String oldPassword = oldPasswordEditText.getText().toString().trim();
+                                String newPassword = newPasswordEditText.getText().toString().trim();
+                                String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+
+                                // Kiểm tra các trường mật khẩu và thực hiện thay đổi mật khẩu
+                                if (newPassword.equals(confirmPassword)) {
+                                    // Xác thực người dùng hiện tại
+                                    AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
+                                    user.reauthenticate(credential)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        // Thay đổi mật khẩu
+                                                        user.updatePassword(newPassword)
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
+                                                                            Toast.makeText(getContext(), "Thay đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                                                                        } else {
+                                                                            Toast.makeText(getContext(), "Thay đổi mật khẩu thất bại", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    }
+                                                                });
+                                                    } else {
+                                                        Toast.makeText(getContext(), "Xác thực mật khẩu cũ không thành công", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                } else {
+                                    Toast.makeText(getContext(), "Mật khẩu mới và nhập lại mật khẩu mới không khớp", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                // Tạo và hiển thị hộp thoại
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        //Open camera
         camera = root.findViewById(R.id.camera);
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
