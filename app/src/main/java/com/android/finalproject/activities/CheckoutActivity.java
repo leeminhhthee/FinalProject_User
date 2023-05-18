@@ -1,14 +1,17 @@
 package com.android.finalproject.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 import com.android.finalproject.R;
 import com.android.finalproject.adapters.AddressAdapter;
 import com.android.finalproject.models.AddressModel;
+import com.android.finalproject.models.CreateOrder;
 import com.android.finalproject.models.MyCartModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,6 +31,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,9 +41,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import vn.zalopay.sdk.Environment;
+import vn.zalopay.sdk.ZaloPayError;
+import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.listeners.PayOrderListener;
+
 public class CheckoutActivity extends AppCompatActivity implements AddressAdapter.SelectedAddress{
     Button addAddressBtn;
-    AppCompatButton btnPayment;
+    AppCompatButton btnPayment, btnZaloPay;
     Toolbar toolbar;
     int total;
     TextView tvTotalCheck, name, email, phone;
@@ -61,6 +72,14 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
         initView();
         ActionToolbar();
 
+        //Zalo Pay
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // ZaloPay SDK Init
+        ZaloPaySDK.init(2553, Environment.SANDBOX);
+
+        //Get address
         firestore.collection("CurrentUser").document(auth.getCurrentUser().getUid())
                 .collection("Address").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -99,7 +118,6 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
             public void onClick(View view) {
                 Intent intent = new Intent(CheckoutActivity.this, AddAddressActivity.class);
                 startActivity(intent);
-//                finish();
             }
         });
 
@@ -132,6 +150,7 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
                     }
                 });
 
+        //Payment delivery
         btnPayment = findViewById(R.id.payment_btn);
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,10 +234,138 @@ public class CheckoutActivity extends AppCompatActivity implements AddressAdapte
                 finish();
             }
         });
+
+        //Zalo Pay
+        btnZaloPay = findViewById(R.id.payment_zalopay);
+        btnZaloPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String orderName = name.getText().toString();
+                String orderPhone = phone.getText().toString();
+                String orderEmail = email.getText().toString();
+                String orderAddress = mAddress;
+                int orderTotal = total;
+
+                String saveCurrentDate;
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate = new SimpleDateFormat("dd MMMM yyyy");
+                saveCurrentDate = currentDate.format(calForDate.getTime());
+
+                // Tạo đối tượng CreateOrder để gọi API tạo đơn hàng
+                CreateOrder orderApi = new CreateOrder();
+                try {
+                    // Tạo đơn hàng với giá trị amount
+                    JSONObject data = orderApi.createOrder(String.valueOf(total));
+                    String code = data.getString("return_code");
+
+                    if (code.equals("1")) {
+                        String token = ((JSONObject) data).getString("zp_trans_token");
+                        // Gọi ZaloPay SDK để thực hiện thanh toán
+                        ZaloPaySDK.getInstance().payOrder(CheckoutActivity.this, token, "demozpdk://app", new PayOrderListener() {
+
+                            @Override
+                            public void onPaymentSucceeded(String transactionId, String transToken, String appTransID) {
+                                final String docId;
+
+                                docId = firestore.collection("orders").document().getId();
+                                //Put user information order to database
+                                final HashMap<String, Object> cartMap = new HashMap<>();
+                                cartMap.put("name", orderName);
+                                cartMap.put("phone", orderPhone);
+                                cartMap.put("email", orderEmail);
+                                cartMap.put("address", orderAddress);
+                                cartMap.put("total", 0);
+                                cartMap.put("date", saveCurrentDate);
+                                cartMap.put("status", "Đơn hàng đã được thanh toán");
+                                cartMap.put("id", docId);
+
+
+                                firestore.collection("orders").document(docId).set(cartMap);
+
+                                //Get product from cart, put product order to database
+                                firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
+                                        .collection("User").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if(task.isSuccessful()){
+                                                    for (DocumentSnapshot doc : task.getResult().getDocuments()){
+                                                        MyCartModel myCartModel = doc.toObject(MyCartModel.class);
+
+                                                        final HashMap<String, Object> proMap = new HashMap<>();
+                                                        proMap.put("proName", myCartModel.getProductName());
+                                                        proMap.put("proPrice", myCartModel.getProductPrice());
+                                                        proMap.put("proQty", myCartModel.getTotalQty());
+                                                        proMap.put("proImg", myCartModel.getProductImg());
+                                                        proMap.put("totalPrice", myCartModel.getTotalPrice());
+
+                                                        firestore.collection("orders").document(docId).collection("order_detail")
+                                                                .add(proMap);
+                                                    }
+                                                }
+                                            }
+                                        });
+
+                                //Delete cart
+                                firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
+                                        .collection("User").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if(task.isSuccessful()) {
+                                                    for(DocumentSnapshot doc : task.getResult().getDocuments()){
+                                                        doc.getReference().delete();
+                                                    }
+                                                }
+                                            }
+                                        });
+
+
+                                Toast.makeText(CheckoutActivity.this, "Ordered successfully!", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(CheckoutActivity.this, MainActivity.class));
+                                finish();
+                            }
+
+                            @Override
+                            public void onPaymentCanceled(String zpTransToken, String appTransID) {
+                                new AlertDialog.Builder(CheckoutActivity.this)
+                                        .setTitle("User Cancel Payment")
+                                        .setMessage(String.format("zpTransToken: %s \n", zpTransToken))
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", null).show();
+                            }
+
+                            @Override
+                            public void onPaymentError(ZaloPayError zaloPayError, String s, String s1) {
+                                new AlertDialog.Builder(CheckoutActivity.this)
+                                        .setTitle("Payment Fail")
+                                        .setMessage(String.format("ZaloPayErrorCode: %s \nTransToken: %s", zaloPayError.toString(), s))
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", null).show();
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
     public void setAddress(String address) {
         mAddress = address;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ZaloPaySDK.getInstance().onResult(intent);
     }
 }
