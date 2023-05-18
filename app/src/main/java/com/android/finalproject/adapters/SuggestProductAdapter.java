@@ -24,7 +24,7 @@ public class SuggestProductAdapter extends RecyclerView.Adapter<SuggestProductAd
     private Context context;
     private List<SuggestProductModel> array;
 
-    public SuggestProductAdapter(Context context, List<SuggestProductModel> array) {
+    public  SuggestProductAdapter(Context context, List<SuggestProductModel> array) {
         this.context = context;
         this.array = array;
     }

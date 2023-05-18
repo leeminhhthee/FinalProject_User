@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -190,35 +191,35 @@ public class ShowAllActivity extends AppCompatActivity {
 
         //Search product
         if(wordsearch != null){
+            //Hien thi nut search
+//            search.setVisibility(View.VISIBLE);
+            search.setText(wordsearch);
+            wordsearch = search.getText().toString();
+
             suggestProductModelList = new ArrayList<>();
             rc_product.setLayoutManager(new GridLayoutManager(this,2));
             suggestProductAdapter = new SuggestProductAdapter(getApplicationContext(), suggestProductModelList);
             rc_product.setAdapter(suggestProductAdapter);
             toolbarNew.setTitle("Search");
 
-            // Xóa bỏ khoảng trắng ở đầu và cuối chuỗi tìm kiếm
-            wordsearch = wordsearch.trim();
-            search.setVisibility(View.VISIBLE);
-            search.setText(wordsearch);
-
-            wordsearch = search.getText().toString();
-            // Tạo một truy vấn Firestore để tìm kiếm sản phẩm
-            CollectionReference productsRef = firestore.collection("AllProducts");
-            Query query = productsRef.whereEqualTo("name", wordsearch);
-
             // Thực hiện truy vấn và lắng nghe kết quả
-            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            firestore.collection("AllProducts").whereEqualTo("name", wordsearch)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (DocumentSnapshot document : task.getResult()) {
                             SuggestProductModel suggestProductModel = document.toObject(SuggestProductModel.class);
                             suggestProductModelList.add(suggestProductModel);
+                            suggestProductAdapter.notifyDataSetChanged();
                         }
-                        suggestProductAdapter.notifyDataSetChanged();
+                        if(suggestProductModelList.isEmpty()){
+                            findViewById(R.id.tvSearchEmpty).setVisibility(View.VISIBLE);
+                        }
                     } else {
                         // Xử lý lỗi
-                        findViewById(R.id.tvSearchEmpty).setVisibility(View.VISIBLE);
+                        Log.e("Search", "Error getting search results", task.getException());
                     }
                 }
             });
