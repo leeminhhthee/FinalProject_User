@@ -1,4 +1,4 @@
-# SmartWatch Shop
+# 📋 SmartWatch Shop 
 
 ## Admin app: 
 https://github.com/leeminhhthee/FinalProject_Admin
